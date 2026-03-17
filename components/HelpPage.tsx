@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import React, { useState } from "react";
 import { ChevronDown, ChevronRight, Search, MessageCircle, Mail, Phone, Book, Video, Users, Settings, CreditCard, Shield, LucideIcon } from "lucide-react";
 import { ThemeToggle } from "./ui/themeToggle";
-import Link from "next/link";
+
 import { ArrowLeft } from "lucide-react";
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
+
 import { Button, buttonVariants } from "@/components/ui/button";
+
+import { usePathname, useRouter } from "next/navigation";
 
 
 // Interfaces
@@ -38,6 +41,9 @@ const HelpPage: React.FC = () => {
   const [expandedFAQ, setExpandedFAQ] = useState<number | null>(null);
   const [searchQuery, setSearchQuery] = useState<string>("");
 
+  const router = useRouter();
+  const pathname = usePathname();
+
   const helpCategories: HelpCategory[] = [
     { id: "getting-started", label: "Getting Started", icon: Book },
     { id: "courses", label: "Courses & Learning", icon: Video },
@@ -47,24 +53,117 @@ const HelpPage: React.FC = () => {
     { id: "privacy", label: "Privacy & Security", icon: Shield },
   ];
 
+
+
   const faqData: FAQData = {
-    "getting-started": [
+    'getting-started': [
       {
-        question: "How do I create an account?",
-        answer:
-          'Click the "Sign Up" button in the top right corner, fill in your details, and verify your email address.',
+        question: 'How do I create an account?',
+        answer: 'Click the "Sign Up" button in the top right corner, fill in your details, and verify your email address. You can also sign up using your Google or LinkedIn account for faster registration.'
       },
       {
-        question: "How do I navigate the platform?",
-        answer:
-          "Use the main navigation menu to access your dashboard, browse courses, and manage your profile.",
+        question: 'How do I navigate the platform?',
+        answer: 'Use the main navigation menu to access your dashboard, browse courses, view your progress, and manage your profile. The search bar at the top helps you find specific courses or topics quickly.'
       },
+      {
+        question: 'What are learning paths?',
+        answer: 'Learning paths are curated sequences of courses designed to help you master specific skills or topics. They provide a structured approach to learning with recommended progression.'
+      },
+      {
+        question: 'How do I track my progress?',
+        answer: 'Visit your dashboard to see completion percentages, certificates earned, and time spent learning. Each course also shows individual lesson progress and quiz scores.'
+      }
     ],
-    courses: [],
-    account: [],
-    technical: [],
-    billing: [],
-    privacy: [],
+    'courses': [
+      {
+        question: 'How do I enroll in a course?',
+        answer: 'Browse our course catalog, click on a course that interests you, and click the "Enroll Now" button. Free courses are immediately accessible, while premium courses require payment.'
+      },
+      {
+        question: 'Can I download course materials?',
+        answer: 'Yes, most courses offer downloadable resources like PDFs, slides, and supplementary materials. Look for the download icon next to each resource.'
+      },
+      {
+        question: 'How do I access course videos offline?',
+        answer: 'Our mobile app allows you to download videos for offline viewing. Simply tap the download button next to any video lesson in the app.'
+      },
+      {
+        question: 'What if I get stuck on a lesson?',
+        answer: 'Use the discussion forum for each course to ask questions, or contact our support team. Many courses also have community study groups you can join.'
+      }
+    ],
+    'account': [
+      {
+        question: 'How do I update my profile information?',
+        answer: 'Go to Settings > Profile to update your personal information, profile picture, and learning preferences. Changes are saved automatically.'
+      },
+      {
+        question: 'How do I reset my password?',
+        answer: 'Click "Forgot Password" on the login page, enter your email address, and follow the instructions in the reset email we send you.'
+      },
+      {
+        question: 'Can I change my email address?',
+        answer: 'Yes, go to Settings > Account Security to change your email address. You\'ll need to verify the new email address before the change takes effect.'
+      },
+      {
+        question: 'How do I delete my account?',
+        answer: 'Contact our support team to request account deletion. Please note that this action is irreversible and will remove all your progress and certificates.'
+      }
+    ],
+    'technical': [
+      {
+        question: 'What browsers are supported?',
+        answer: 'We support the latest versions of Chrome, Firefox, Safari, and Edge. For the best experience, we recommend using Chrome with hardware acceleration enabled.'
+      },
+      {
+        question: 'Why are videos not playing?',
+        answer: 'Check your internet connection, disable ad blockers, and ensure your browser is up to date. If issues persist, try clearing your browser cache or switching to incognito mode.'
+      },
+      {
+        question: 'The platform is loading slowly. What can I do?',
+        answer: 'This might be due to your internet connection or browser cache. Try refreshing the page, clearing your cache, or switching to a different network if possible.'
+      },
+      {
+        question: 'How do I report a bug?',
+        answer: 'Use the "Report Issue" button in the help menu, or email us at support@nextlearn.com with details about the problem and your browser/device information.'
+      }
+    ],
+    'billing': [
+      {
+        question: 'What payment methods do you accept?',
+        answer: 'We accept all major credit cards (Visa, Mastercard, American Express), PayPal, and bank transfers. All payments are processed securely through our payment partners.'
+      },
+      {
+        question: 'How do I cancel my subscription?',
+        answer: 'Go to Settings > Billing and click "Cancel Subscription". You\'ll retain access to premium content until the end of your current billing period.'
+      },
+      {
+        question: 'Can I get a refund?',
+        answer: 'We offer a 30-day money-back guarantee for all subscriptions. Individual course purchases can be refunded within 7 days if you\'ve completed less than 20% of the content.'
+      },
+      {
+        question: 'How do I update my payment information?',
+        answer: 'Visit Settings > Billing to update your credit card information, billing address, or change your payment method.'
+      }
+    ],
+    'privacy': [
+      {
+        question: 'How is my data protected?',
+        answer: 'We use industry-standard encryption to protect your data both in transit and at rest. Our servers are hosted on secure cloud infrastructure with regular security audits.'
+      },
+      {
+        question: 'Do you share my personal information?',
+        answer: 'We never sell your personal information. We only share data with trusted partners as outlined in our Privacy Policy, and only to provide you with our services.'
+      },
+      {
+        question: 'Can I export my learning data?',
+        answer: 'Yes, you can request a complete export of your learning data, including progress, certificates, and account information from Settings > Privacy.'
+      },
+      {
+        question: 'How do I manage cookie preferences?',
+        answer: 'Click the cookie preferences link in the footer to manage which cookies you allow. You can also disable cookies in your browser settings.'
+      }
+    ]
   };
 
   const contactMethods: ContactMethod[] = [
@@ -100,7 +199,7 @@ const HelpPage: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 dark:from-black dark:to-gray-900">
-      <Link
+      {/* <Link
         href="/dashboard"
         className={buttonVariants({
           variant: "outline",
@@ -109,7 +208,18 @@ const HelpPage: React.FC = () => {
       >
         <ArrowLeft className="size-4" />
         <span>Go Back</span>
-      </Link>
+      </Link> */}
+
+      <button
+        onClick={() => router.back()}
+        className={buttonVariants({
+          variant: "outline",
+          className: "mb-6 flex items-center gap-2"
+        })}
+      >
+        <ArrowLeft className="size-4" />
+        <span>Go Back</span>
+      </button>
 
       {/* ================= HEADER WITH THEME TOGGLE ================= */}
       <div className="bg-white dark:bg-black shadow-sm border-b dark:border-gray-800">
@@ -162,8 +272,8 @@ const HelpPage: React.FC = () => {
                       key={category.id}
                       onClick={() => setActiveCategory(category.id)}
                       className={`w-full flex items-center space-x-3 px-3 py-2 rounded-lg text-left transition-colors ${activeCategory === category.id
-                          ? "bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400 border-l-4 border-blue-500"
-                          : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
+                        ? "bg-blue-50 dark:bg-gray-800 text-blue-700 dark:text-blue-400 border-l-4 border-blue-500"
+                        : "text-gray-600 dark:text-gray-400 hover:bg-gray-50 dark:hover:bg-gray-800"
                         }`}
                     >
                       <Icon className="w-5 h-5" />

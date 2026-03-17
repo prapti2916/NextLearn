@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
 import { AdminLessonSingularType } from "@/app/data/admin/admin-get-lesson"

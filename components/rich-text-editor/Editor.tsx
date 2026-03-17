@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 "use client"
 
 import { EditorContent, useEditor } from "@tiptap/react";
@@ -45,10 +46,16 @@ export const RichTextEditor = ({ field }: { field: any }) => {
         types: ["heading", "paragraph"],
       }),
     ],
+    // editorProps: {
+    //   attributes: {
+    //     class:
+    //       "min-h-[300px] p-4 focus:outline-none prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert !w-full !max-w-none",
+    //   },
+    // },
     editorProps: {
       attributes: {
-        class:
-          "min-h-[300px] p-4 focus:outline-none prose prose-sm sm:prose lg:prose-lg xl:prose-xl dark:prose-invert !w-full !max-w-none",
+         class:
+          "min-h-[300px] p-4 leading-relaxed focus:outline-none prose dark:prose-invert !w-full !max-w-none"
       },
     },
     immediatelyRender: false,

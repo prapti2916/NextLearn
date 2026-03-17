@@ -5,13 +5,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { courseCategories, courseLevels, courseSchema, CourseSchemaType, courseStatus } from "@/lib/zodschemas"
 import { ArrowLeftIcon, Loader2, PlusIcon, SparkleIcon } from "lucide-react"
 import Link from "next/link"
-import { 
+import {
   Form,
-  FormControl, 
-  FormField, 
-  FormItem, 
-  FormLabel, 
-  FormMessage 
+  FormControl,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormMessage
 } from "@/components/ui/form"
 import { Input } from "@/components/ui/input"
 import slugify from "slugify"
@@ -35,11 +35,11 @@ const CourseCreationPage = () => {
 
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
-   const { triggerConfetti } = useConfetti();
+  const { triggerConfetti } = useConfetti();
 
-const form = useForm<CourseSchemaType>({
-  resolver: zodResolver(courseSchema),
-defaultValues: {
+  const form = useForm<CourseSchemaType>({
+    resolver: zodResolver(courseSchema),
+    defaultValues: {
       title: "",
       description: "",
       filekey: "",
@@ -51,24 +51,24 @@ defaultValues: {
       slug: "",
       smallDescription: "",
     }
-});
+  });
 
 
   const onSubmit = (values: CourseSchemaType) => {
     startTransition(async () => {
-      const {data:result, error} = await tryCatch(CreateCourse(values));
-      
-      if(error){
+      const { data: result, error } = await tryCatch(CreateCourse(values));
+
+      if (error) {
         toast.error("An unexpected error occurred");
         return
       }
 
-      if(result.status === "success"){
+      if (result.status === "success") {
         toast.success(result.message);
         triggerConfetti();
         form.reset();
         router.push("/admin/courses");
-      }else if(result.status === "error"){
+      } else if (result.status === "error") {
         toast.error(result.message)
       }
     })
@@ -77,14 +77,14 @@ defaultValues: {
   return (
     <>
       <div className="flex items-center gap-4">
-        <Link 
-          href="/admin/courses" 
+        <Link
+          href="/admin/courses"
           className={buttonVariants({
             variant: "outline",
             size: "icon"
           })}
         >
-          <ArrowLeftIcon className="size-4"/>
+          <ArrowLeftIcon className="size-4" />
         </Link>
 
         <h1 className="text-2xl font-bold">
@@ -92,25 +92,25 @@ defaultValues: {
         </h1>
       </div>
 
-     <Card>
-       <CardHeader>
-         <CardTitle>Basic Information</CardTitle>
-         <CardDescription>
-          Provide basic information about the course.
-         </CardDescription>
-       </CardHeader>
+      <Card>
+        <CardHeader>
+          <CardTitle>Basic Information</CardTitle>
+          <CardDescription>
+            Provide basic information about the course.
+          </CardDescription>
+        </CardHeader>
 
-       <CardContent>
+        <CardContent>
           <Form {...form}>
             <form className="space-y-6" onSubmit={form.handleSubmit(onSubmit)}>
-              <FormField 
+              <FormField
                 control={form.control}    // Se ocupa de la validación de los campos
                 name="title"              // Nombre del campo
                 render={({ field }) => (  // Renderiza el campo
                   <FormItem>
                     <FormLabel>Title</FormLabel>
                     <FormControl>
-                      <Input 
+                      <Input
                         placeholder="Title"
                         {...field}
                       />
@@ -122,9 +122,9 @@ defaultValues: {
 
               <div className="flex items-end gap-4">
                 <FormField
-                  control={form.control}    
-                  name="slug"              
-                  render={({ field }) => (  
+                  control={form.control}
+                  name="slug"
+                  render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Slug</FormLabel>
                       <FormControl>
@@ -138,7 +138,7 @@ defaultValues: {
                   )}
                 />
 
-               <Button
+                {/* <Button
                   type="button"
                   className="w-fit"
                   onClick={(() => {
@@ -146,6 +146,18 @@ defaultValues: {
                     const slug = slugify(titleValue);
                     form.setValue("slug", slug, {shouldValidate: true});
                   })}
+                >
+                  Generate Slug <SparkleIcon className="ml-1" size={16} />
+                </Button> */}
+
+                <Button
+                  type="button"
+                  className="w-fit"
+                  onClick={() => {
+                    const titleValue = form.getValues("title");
+                    const slug = slugify(titleValue);
+                    form.setValue("slug", slug);
+                  }}
                 >
                   Generate Slug <SparkleIcon className="ml-1" size={16} />
                 </Button>
@@ -190,7 +202,7 @@ defaultValues: {
                   <FormItem className="w-full">
                     <FormLabel>Thumbnail image</FormLabel>
                     <FormControl>
-                      <Uploader 
+                      <Uploader
                         onChange={field.onChange}   // Cuando el value cambie esta función lo actualiza en form
                         value={field.value}         // El valor del state del uploader es el que react-hook-form tiene reservado para el campo fileKey
                         fileTypeAccepted="image"
@@ -208,9 +220,9 @@ defaultValues: {
                   render={({ field }) => (
                     <FormItem className="w-full">
                       <FormLabel>Category</FormLabel>
-                      <Select 
+                      <Select
                         onValueChange={field.onChange}
-                        defaultValue={field.value}  
+                        defaultValue={field.value}
                       >
                         <FormControl>
                           <SelectTrigger className="w-full">
@@ -278,20 +290,20 @@ defaultValues: {
                   )}
                 />
 
-               
-        <FormField
-          control={form.control}
-          name="price"
-          render={({ field }) => (
-            <FormItem>
-              <FormLabel>Price</FormLabel>
-              <FormControl>
-                <Input {...field} type="number" placeholder="Price in USD" />
-              </FormControl>
-              <FormMessage />
-            </FormItem>
-          )}
-        />
+
+                <FormField
+                  control={form.control}
+                  name="price"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Price</FormLabel>
+                      <FormControl>
+                        <Input {...field} type="number" placeholder="Price in USD" />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
               </div>
 
               <FormField
@@ -329,7 +341,7 @@ defaultValues: {
                     Creating...
                     <Loader2 className="animate-spin ml-1" />
                   </>
-                ):(
+                ) : (
                   <>
                     Create Course <PlusIcon className="ml-1" size={16} />
                   </>
@@ -337,8 +349,8 @@ defaultValues: {
               </Button>
             </form>
           </Form>
-       </CardContent>
-     </Card>
+        </CardContent>
+      </Card>
     </>
   )
 }

@@ -43,6 +43,11 @@ const data = {
       url: "/admin/courses",
       icon: IconListDetails,
     },
+    {
+      title: "Course Analytics",
+       url: "/admin/course-anayltics",
+      icon: IconChartBar,
+    },
   
   ],
   navClouds: [
@@ -96,7 +101,7 @@ const data = {
 navSecondary: [
   {
     title: "Settings",
-    url: "/dashboard/settings",
+     url: "/admin/settings",
     icon: IconSettings,
   },
   {
@@ -104,11 +109,11 @@ navSecondary: [
     url: "/help", // 🔥 updated path
     icon: IconHelp,
   },
-  {
-    title: "Search",
-    url: "/dashboard/search",
-    icon: IconSearch,
-  },
+  // {
+  //   title: "Search",
+  //   url: "/dashboard/search",
+  //   icon: IconSearch,
+  // },
 ],
 
 }
