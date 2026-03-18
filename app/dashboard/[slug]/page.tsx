@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getCourseSidebarData } from "@/app/data/course/get-course-sidebar-data";
 
 import { redirect } from "next/navigation";

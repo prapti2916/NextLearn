@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { prisma } from "@/lib/db";
 import { env } from "@/lib/env";
 import { headers } from "next/headers";

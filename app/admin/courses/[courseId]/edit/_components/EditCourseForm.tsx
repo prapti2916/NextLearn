@@ -11,7 +11,7 @@ import { tryCatch } from "@/hooks/try-catch";
 import { courseCategories, courseLevels, courseSchema, CourseSchemaType, courseStatus } from "@/lib/zodschemas";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, PlusIcon, SparkleIcon } from "lucide-react";
-import { startTransition, useTransition } from "react";
+import { useTransition } from "react";
 import { useForm } from "react-hook-form";
 import slugify from "slugify";
 import { toast } from "sonner";

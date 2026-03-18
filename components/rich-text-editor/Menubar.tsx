@@ -7,9 +7,9 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip"
 import { Toggle } from "@/components/ui/toggle"
-import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon, Heading, Heading1Icon, Heading2Icon, Heading3Icon, Italic, ListIcon, ListOrderedIcon, RedoIcon, Strikethrough, UndoIcon } from "lucide-react";
+import { AlignCenterIcon, AlignLeftIcon, AlignRightIcon, BoldIcon,  Heading1Icon, Heading2Icon, Heading3Icon, Italic, ListIcon, ListOrderedIcon, RedoIcon, Strikethrough, UndoIcon } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { text } from "stream/consumers";
+// import { text } from "stream/consumers";
 import { Button } from "../ui/button";
 
 interface iAppProps {

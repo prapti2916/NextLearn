@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { toast } from "sonner";
-import { useRouter } from "next/navigation";
+
 import { useTransition } from "react";
 import { tryCatch } from "@/hooks/try-catch";
 import { enrollInCourseAction } from "../action";

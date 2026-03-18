@@ -1,6 +1,6 @@
 import { buttonVariants } from "@/components/ui/button"
 import Link from "next/link"
-import { description } from '../../../components/sidebar/chart-area-interactive';
+// import { description } from '../../../components/sidebar/chart-area-interactive';
 import { cn } from "@/lib/utils";
 import { Check, Play } from "lucide-react";
 

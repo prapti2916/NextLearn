@@ -1,5 +1,5 @@
 import { Ban, PlusCircle } from "lucide-react"
-import { description } from '../sidebar/chart-area-interactive';
+// import { description } from '../sidebar/chart-area-interactive';
 import Link from "next/link";
 import { buttonVariants } from "../ui/button";
 

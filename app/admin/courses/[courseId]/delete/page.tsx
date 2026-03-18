@@ -5,10 +5,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { tryCatch } from '@/hooks/try-catch'
 import Link from 'next/link'
 import { useParams, useRouter } from 'next/navigation'
-import React, { startTransition, useTransition } from 'react'
+import React, { useTransition } from 'react'
 import { toast } from 'sonner'
 import { DeleteCourse } from './action'
-import { on } from 'events'
 import { Loader2, Trash2 } from 'lucide-react'
 
 const DeleteCourseRoute = () => {

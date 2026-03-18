@@ -11,9 +11,14 @@ const PaymentSucessfull = () => {
 
   const { triggerConfetti } = useConfetti()
 
+  // useEffect(() => {
+  //   triggerConfetti()
+  // },[])
+
   useEffect(() => {
     triggerConfetti()
-  },[])
+  }, [triggerConfetti]) // ✅ FIX
+
 
   return (
     <div className='w-full min-h-screen flex flex-1 justify-center items-center'>

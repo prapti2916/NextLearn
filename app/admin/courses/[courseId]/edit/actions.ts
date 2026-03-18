@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use server"
 
 import { requireAdmin } from "@/app/data/admin/require-admin"
@@ -7,7 +8,7 @@ import { ApiResponse } from "@/lib/types";
 import { chapterSchema, ChapterSchemaType, courseSchema, CourseSchemaType, lessonSchema, LessonSchemaType } from "@/lib/zodschemas";
 import { request } from "@arcjet/next";
 import { revalidatePath } from "next/cache";
-import { title } from 'process';
+
 
 const aj = arcjet // Configuración de protección contra bots y ataques de fuerza bruta
   .withRule(

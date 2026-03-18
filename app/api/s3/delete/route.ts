@@ -1,10 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { requireAdmin } from "@/app/data/admin/require-admin";
 import { S3 } from "@/lib/S3Client";
 import arcjet, { fixedWindow } from "@/lib/arcjet";
-import { auth } from "@/lib/auth";
-import { env } from "@/lib/env";
+// import { auth } from "@/lib/auth";
+// import { env } from "@/lib/env";
 import { DeleteObjectCommand } from "@aws-sdk/client-s3";
-import { headers } from "next/headers";
+// import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 
 const aj=arcjet
