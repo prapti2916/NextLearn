@@ -308,8 +308,6 @@
 // export default SlugPage;
 
 
-
-
 import Image from "next/image";
 import { getIndividualCourse } from "@/app/data/course/get-course";
 import { RenderDescription } from "@/components/rich-text-editor/RenderDescription";
@@ -338,9 +336,9 @@ import Comments from "./Comments";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
 
-// ✅ helper function (instead of hook)
+// ✅ Replace hook with normal function
 const constructUrl = (key: string) => {
-  return `https://your-storage-url/${key}`; // 🔁 replace with your real base URL
+  return `https://your-storage-url/${key}`; // 🔁 change to your real storage URL
 };
 
 const SlugPage = async ({
@@ -348,22 +346,27 @@ const SlugPage = async ({
 }: {
   params: Promise<{ slug: string }>;
 }) => {
+  // ✅ Correct way
   const { slug } = await params;
 
   const course = await getIndividualCourse(slug);
   const thumbnailUrl = constructUrl(course.filekey);
   const isEnrolled = await checkifCourseBought(course.id);
 
-  // Get current user session
+  // ✅ Get user session
   const session = await auth.api.getSession({
     headers: await headers(),
   });
+
   const currentUserId = session?.user?.id;
 
   return (
     <div className="grid grid-cols-1 gap-8 lg:grid-cols-3 mt-5">
-      {/* Left Column */}
+      
+      {/* LEFT SIDE */}
       <div className="order-1 lg:col-span-2">
+
+        {/* Thumbnail */}
         <div className="relative aspect-video w-full overflow-hidden rounded-xl shadow-lg">
           <Image
             src={thumbnailUrl}
@@ -372,109 +375,83 @@ const SlugPage = async ({
             className="object-cover"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent"></div>
         </div>
 
+        {/* Course Info */}
         <div className="mt-8 space-y-6">
-          <div className="space-y-4">
-            <h1 className="text-4xl font-bold tracking-tight">
-              {course.title}
-            </h1>
-            <p className="text-lg text-muted-foreground leading-relaxed line-clamp-2">
+          <div>
+            <h1 className="text-4xl font-bold">{course.title}</h1>
+            <p className="text-muted-foreground mt-2">
               {course.smallDescription}
             </p>
           </div>
 
-          <div className="flex flex-wrap gap-3">
-            <Badge className="flex items-center gap-1 px-3 py-1">
+          <div className="flex gap-3 flex-wrap">
+            <Badge>
               <IconChartBar className="size-4" />
-              <span>{course.level}</span>
+              {course.level}
             </Badge>
-            <Badge className="flex items-center gap-1 px-3 py-1">
+
+            <Badge>
               <IconCategory className="size-4" />
-              <span>{course.category}</span>
+              {course.category}
             </Badge>
-            <Badge className="flex items-center gap-1 px-3 py-1">
+
+            <Badge>
               <IconClock className="size-4" />
-              <span>{course.duration} hours</span>
+              {course.duration} hours
             </Badge>
           </div>
 
-          <Separator className="my-8" />
+          <Separator />
 
-          <div className="space-y-6">
-            <h2 className="text-3xl font-semibold tracking-tight">
+          <div>
+            <h2 className="text-2xl font-semibold mb-3">
               Course Description
             </h2>
             <RenderDescription json={JSON.parse(course.description)} />
           </div>
         </div>
 
-        {/* Course Content */}
-        <div className="mt-12 space-y-6">
-          <div className="flex items-center justify-between">
-            <h2 className="text-3xl font-semibold tracking-tight">
-              Course Content
-            </h2>
-            <div>
-              {course.chapter.length} chapters |{" "}
-              {course.chapter.reduce(
-                (total, chapter) => total + chapter.lessons.length,
-                0
-              ) || 0}{" "}
-              Lessons
-            </div>
-          </div>
+        {/* Chapters */}
+        <div className="mt-10 space-y-6">
+          <h2 className="text-2xl font-semibold">Course Content</h2>
 
-          <div className="space-y-6">
-            {course.chapter.map((chapter, index) => (
-              <Collapsible key={chapter.id} defaultOpen={index === 0}>
-                <Card className="p-0 overflow-hidden border-2 hover:shadow-md gap-0">
-                  <CollapsibleTrigger>
-                    <CardContent className="p-6 hover:bg-muted/50">
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center gap-4">
-                          <p className="flex size-10 items-center justify-center rounded-full bg-primary/10 text-primary font-semibold">
-                            {index + 1}
-                          </p>
-                          <div>
-                            <h3 className="text-xl font-semibold text-left">
-                              {chapter.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground mt-1">
-                              {chapter.lessons.length} lessons
-                            </p>
-                          </div>
-                        </div>
-                        <IconChevronDown className="size-5" />
-                      </div>
-                    </CardContent>
-                  </CollapsibleTrigger>
-
-                  <CollapsibleContent>
-                    <div className="border-t bg-muted-foreground/10 p-6 space-y-3">
-                      {chapter.lessons.map((lesson, lessonIndex) => (
-                        <div
-                          key={lesson.id}
-                          className="flex items-center gap-4 p-3 hover:bg-accent/40 rounded-lg"
-                        >
-                          <IconPlayerPlay className="size-4" />
-                          <div>
-                            <p className="text-sm font-medium">
-                              {lesson.title}
-                            </p>
-                            <p className="text-xs text-muted-foreground">
-                              Lesson {lessonIndex + 1}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
+          {course.chapter.map((chapter, index) => (
+            <Collapsible key={chapter.id} defaultOpen={index === 0}>
+              <Card>
+                <CollapsibleTrigger>
+                  <CardContent className="p-4 flex justify-between">
+                    <div>
+                      <h3 className="font-semibold">
+                        {index + 1}. {chapter.title}
+                      </h3>
+                      <p className="text-sm text-muted-foreground">
+                        {chapter.lessons.length} lessons
+                      </p>
                     </div>
-                  </CollapsibleContent>
-                </Card>
-              </Collapsible>
-            ))}
-          </div>
+                    <IconChevronDown />
+                  </CardContent>
+                </CollapsibleTrigger>
+
+                <CollapsibleContent>
+                  <div className="p-4 space-y-2">
+                    {chapter.lessons.map((lesson, i) => (
+                      <div
+                        key={lesson.id}
+                        className="flex gap-2 items-center"
+                      >
+                        <IconPlayerPlay className="size-4" />
+                        <span>
+                          Lesson {i + 1}: {lesson.title}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                </CollapsibleContent>
+              </Card>
+            </Collapsible>
+          ))}
         </div>
 
         {/* Comments */}
@@ -485,37 +462,44 @@ const SlugPage = async ({
         />
       </div>
 
-      {/* Right Column */}
+      {/* RIGHT SIDE */}
       <div className="order-2 lg:col-span-1">
-        <div className="sticky top-20">
-          <Card>
-            <CardContent className="p-6">
-              <div className="flex justify-between mb-6">
-                <span>Price:</span>
-                <span className="font-bold">
-                  {new Intl.NumberFormat("en-US", {
-                    style: "currency",
-                    currency: "USD",
-                  }).format(course.price)}
-                </span>
-              </div>
+        <Card>
+          <CardContent className="p-5">
+            
+            <div className="flex justify-between mb-4">
+              <span>Price:</span>
+              <span className="font-bold">
+                {new Intl.NumberFormat("en-US", {
+                  style: "currency",
+                  currency: "USD",
+                }).format(course.price)}
+              </span>
+            </div>
 
-              {isEnrolled ? (
-                <Link
-                  href="/dashboard"
-                  className={buttonVariants({ className: "w-full" })}
-                >
-                  Watch Course
-                </Link>
-              ) : (
-                <EnrollmentButton courseId={course.id} />
-              )}
-            </CardContent>
-          </Card>
-        </div>
+            {isEnrolled ? (
+              <Link
+                href="/dashboard"
+                className={buttonVariants({ className: "w-full" })}
+              >
+                Watch Course
+              </Link>
+            ) : (
+              <EnrollmentButton courseId={course.id} />
+            )}
+
+            <p className="text-xs text-center mt-3 text-muted-foreground">
+              30-day money-back guarantee
+            </p>
+
+          </CardContent>
+        </Card>
       </div>
+
     </div>
   );
 };
 
 export default SlugPage;
+
+
