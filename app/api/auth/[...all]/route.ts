@@ -28,10 +28,17 @@ import { NextRequest } from "next/server";
  * Configuración para la validación de correos electrónicos de Arcjet.
  * @see https://docs.arcjet.com/email-validation/configuration
  */
+// const emailOptions = {
+//   mode: "LIVE", // Bloqueará las solicitudes. Usa "DRY_RUN" para solo registrar.
+//   // Bloquea correos que son desechables, inválidos o no tienen registros MX.
+//   block: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
+// } satisfies EmailOptions;
+
 const emailOptions = {
-  mode: "LIVE", // Bloqueará las solicitudes. Usa "DRY_RUN" para solo registrar.
-  // Bloquea correos que son desechables, inválidos o no tienen registros MX.
-  block: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
+  mode: "LIVE",
+
+  // ✅ FIX: block → deny
+  deny: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
 } satisfies EmailOptions;
 
 /**
