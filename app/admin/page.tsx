@@ -44,7 +44,7 @@ export default async function AdminIndexPage() {
 }
 
 
-export const RenderRecentCourses = async() => {
+const RenderRecentCourses = async() => {
   
   const data = await adminGetRecentCourses();
   if(data.length === 0) {
@@ -81,7 +81,7 @@ export const RenderRecentCourses = async() => {
   )
 }
 
-export const RenderRecentCoursesSkeletonLayout = async() => {
+const RenderRecentCoursesSkeletonLayout = async() => {
   return (
     <div className="relative px-12">
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
