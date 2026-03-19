@@ -12,7 +12,7 @@ import { toast } from "sonner"
 
 
 
-const VerifyRequest = () => {
+const VerifyRequestClient = () => {
 
   const router = useRouter();
   const [otp, setOtp] = useState("");                         // Aqui se almacena el OTP recibido por email
@@ -93,4 +93,4 @@ const VerifyRequest = () => {
   )
 }
 
-export default VerifyRequest
+export default VerifyRequestClient
