@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 // /* eslint-disable react-hooks/rules-of-hooks */
 // import Image from "next/image";
 // import { getIndividualCourse } from "@/app/data/course/get-course";
@@ -326,6 +327,8 @@ import {
   IconChevronDown,
   IconClock,
   IconPlayerPlay,
+  ReactNode,
+  
 } from "@tabler/icons-react";
 // import { CheckIcon } from "lucide-react";
 import { checkifCourseBought } from "@/app/data/user/user-is-enrolled";
@@ -335,6 +338,8 @@ import Link from "next/link";
 import Comments from "./Comments";
 import { headers } from "next/headers";
 import { auth } from "@/lib/auth";
+import { Key, ReactElement, JSXElementConstructor, ReactPortal } from "react";
+
 
 // ✅ Replace hook with normal function
 const constructUrl = (key: string) => {
@@ -417,7 +422,7 @@ const SlugPage = async ({
         <div className="mt-10 space-y-6">
           <h2 className="text-2xl font-semibold">Course Content</h2>
 
-          {course.chapter.map((chapter, index) => (
+          {course.chapter.map((chapter: { id: Key | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; lessons: any[]; }, index: number) => (
             <Collapsible key={chapter.id} defaultOpen={index === 0}>
               <Card>
                 <CollapsibleTrigger>
@@ -436,7 +441,7 @@ const SlugPage = async ({
 
                 <CollapsibleContent>
                   <div className="p-4 space-y-2">
-                    {chapter.lessons.map((lesson, i) => (
+                    {chapter.lessons.map((lesson: { id: Key | null | undefined; title: string | number | bigint | boolean | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | ReactPortal | Promise<string | number | bigint | boolean | ReactPortal | ReactElement<unknown, string | JSXElementConstructor<any>> | Iterable<ReactNode> | null | undefined> | null | undefined; }, i: number) => (
                       <div
                         key={lesson.id}
                         className="flex gap-2 items-center"
