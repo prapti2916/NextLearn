@@ -7,6 +7,7 @@ import { env } from "@/lib/env";
 import { stripe } from "@/lib/stripe";
 import { ApiResponse } from "@/lib/types"
 import { request } from "@arcjet/next";
+import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 
 import Stripe from "stripe";
@@ -103,7 +104,9 @@ export const enrollInCourseAction = async (courseId:string):Promise<ApiResponse 
       })
     }
 
-    const result = await prisma.$transaction(async (tx) => {                     // Garantiza que todas las operaciones sobre la base de datos (verificar si existe una inscripción, crearla o actualizarla) se completen con éxito como un solo bloque
+    // const result = await prisma.$transaction(async (tx) => {                     // Garantiza que todas las operaciones sobre la base de datos (verificar si existe una inscripción, crearla o actualizarla) se completen con éxito como un solo bloque
+
+    const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
       
       const existingEnrollment = await tx.enrollment.findUnique({                // Comprobamos si el usuario ya tiene una inscripción para ese curso. 
         where: {

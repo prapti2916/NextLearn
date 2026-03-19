@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use client"
 
@@ -31,7 +32,7 @@ const VerifyRequestClient = () => {
             toast.success('Email Verified')
             router.push("/")                                  // Si el código es correcto, redirecciona al usuario a la página de inicio
           },
-          onError: (error) => {
+          onError: (error: any) => {
             toast.error("Error verifying email/OTP")          // Si el código es incorrecto, muestra un error
           }
         }
