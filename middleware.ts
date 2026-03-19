@@ -46,65 +46,28 @@
 
 
 
-import { NextRequest, NextResponse, NextFetchEvent } from "next/server";
+
+
+import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
-import { env } from "./lib/env";
 
-async function authMiddleware(request: NextRequest) {
-  const sessionCookie = getSessionCookie(request);
+// 🔐 Auth Middleware (Admin Protection)
+export async function middleware(request: NextRequest) {
+  // Agar admin route hai to login check karo
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+    const sessionCookie = getSessionCookie(request);
 
-  if (!sessionCookie) {
-    return NextResponse.redirect(new URL("/", request.url));
+    // Agar user login nahi hai → redirect home
+    if (!sessionCookie) {
+      return NextResponse.redirect(new URL("/", request.url));
+    }
   }
 
+  // Baaki sab request allow
   return NextResponse.next();
 }
 
+// 🚫 Static files & auth API ignore
 export const config = {
   matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth).*)"],
 };
-
-export default async function middleware(
-  request: NextRequest,
-  event: NextFetchEvent   // ✅ ADD THIS
-) {
-
-  // ✅ Production → Arcjet OFF
-  if (process.env.NODE_ENV === "production") {
-    if (request.nextUrl.pathname.startsWith("/admin")) {
-      return authMiddleware(request);
-    }
-    return NextResponse.next();
-  }
-
-  // ✅ Dev → Arcjet ON
-  const { default: arcjet, createMiddleware, detectBot } = await import("@arcjet/next");
-
-  const aj = arcjet({
-    key: env.ARCJET_KEY!,
-    rules: [
-      detectBot({
-        mode: "LIVE",
-        allow: [
-          "CATEGORY:SEARCH_ENGINE",
-          "CATEGORY:MONITOR",
-          "CATEGORY:PREVIEW",
-          "STRIPE_WEBHOOK",
-        ],
-      }),
-    ],
-  });
-
-  const arcjetMiddleware = createMiddleware(aj);
-
-  // ✅ FIX: pass BOTH request + event
-  const response = await arcjetMiddleware(request, event);
-
-  if (response) return response;
-
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    return authMiddleware(request);
-  }
-
-  return NextResponse.next();
-}
