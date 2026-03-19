@@ -199,7 +199,8 @@ import { NextRequest } from "next/server";
 const emailOptions = {
   mode: "DRY_RUN",   // 🔥 FIX (LIVE → DRY_RUN)
 
-  deny: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
+  // deny: ["DISPOSABLE", "INVALID", "NO_MX_RECORDS"],
+  deny:[],
 } satisfies EmailOptions;
 
 /**
