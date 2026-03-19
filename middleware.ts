@@ -50,7 +50,6 @@ import { NextRequest, NextResponse, NextFetchEvent } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 import { env } from "./lib/env";
 
-// 🔐 Auth middleware
 async function authMiddleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);
 
@@ -69,7 +68,16 @@ export default async function middleware(
   request: NextRequest,
   event: NextFetchEvent   // ✅ ADD THIS
 ) {
-  // 🔥 Dynamic import
+
+  // ✅ Production → Arcjet OFF
+  if (process.env.NODE_ENV === "production") {
+    if (request.nextUrl.pathname.startsWith("/admin")) {
+      return authMiddleware(request);
+    }
+    return NextResponse.next();
+  }
+
+  // ✅ Dev → Arcjet ON
   const { default: arcjet, createMiddleware, detectBot } = await import("@arcjet/next");
 
   const aj = arcjet({
@@ -89,12 +97,11 @@ export default async function middleware(
 
   const arcjetMiddleware = createMiddleware(aj);
 
-  // ✅ PASS BOTH request + event
-  const arcjetResponse = await arcjetMiddleware(request, event);
+  // ✅ FIX: pass BOTH request + event
+  const response = await arcjetMiddleware(request, event);
 
-  if (arcjetResponse) return arcjetResponse;
+  if (response) return response;
 
-  // 🔐 Admin protection
   if (request.nextUrl.pathname.startsWith("/admin")) {
     return authMiddleware(request);
   }
