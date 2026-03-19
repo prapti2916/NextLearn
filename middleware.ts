@@ -48,26 +48,31 @@
 
 
 
+// app/_middleware.ts
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
 
-// 🔐 Auth Middleware (Admin Protection)
+// 🔐 Admin protection middleware (Edge-friendly, <1MB)
 export async function middleware(request: NextRequest) {
-  // Agar admin route hai to login check karo
-  if (request.nextUrl.pathname.startsWith("/admin")) {
-    const sessionCookie = getSessionCookie(request);
+  const { pathname } = request.nextUrl;
 
-    // Agar user login nahi hai → redirect home
+  // Only protect /admin routes
+  if (pathname.startsWith("/admin")) {
+    // Simple session check using cookie named 'session'
+    const sessionCookie = request.cookies.get("session")?.value;
+
+    // If no session → redirect to home page
     if (!sessionCookie) {
       return NextResponse.redirect(new URL("/", request.url));
     }
   }
 
-  // Baaki sab request allow
+  // Allow all other requests
   return NextResponse.next();
 }
 
-// 🚫 Static files & auth API ignore
+// 🚫 Ignore static files & auth API
 export const config = {
-  matcher: ["/((?!_next/static|_next/image|favicon.ico|api/auth).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
+  ],
 };

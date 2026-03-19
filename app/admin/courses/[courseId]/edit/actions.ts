@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 /* eslint-disable @typescript-eslint/no-unused-vars */
 "use server"
 
@@ -184,7 +185,17 @@ export const createChapter = async(values: ChapterSchemaType): Promise<ApiRespon
       }
     }
 
-    await prisma.$transaction(async(tx) => {      // Iniciamos una transacción para que se ejecuten todas las operaciones en la misma transacción
+    await prisma.$transaction(async(tx: {
+        chapter: {
+          findFirst: (arg0: { // 1º Busca el capítulo con la posición más alta para el curso actual. Esto se hace para saber en que posición debe insertarse el nuevo capítulo (simempre al final)
+            where: { courseId: string; }; select: { position: boolean; }; orderBy: { position: string; };
+          }) => any; create: (arg0: { // 2º Crea el nuevo registro en la tabla de capítulos 
+            data: {
+              title: string; courseId: string; position: any; // Si maxPos es undefined -> valor por defecto es 0 y a este se le suma 1 
+            }; // Si maxPos es un número -> se suma 1 al valor de maxPos
+          }) => any;
+        };
+      }) => {      // Iniciamos una transacción para que se ejecuten todas las operaciones en la misma transacción
 
       // tx representa la transacción actual
       // que se compone de dos partes:
@@ -238,7 +249,17 @@ export const createLesson = async(values: LessonSchemaType): Promise<ApiResponse
       }
     }
 
-    await prisma.$transaction(async(tx) => {      // Iniciamos una transacción para que se ejecuten todas las operaciones en la misma transacción
+    await prisma.$transaction(async(tx: {
+        lesson: {
+          findFirst: (arg0: { // 1º Busca la lesson con la posición más alta para el curso actual. Esto se hace para saber en que posición debe insertarse la lesson (siempre al final)
+            where: { chapterId: string; }; select: { position: boolean; }; orderBy: { position: string; };
+          }) => any; create: (arg0: { // 2º Crea el nuevo registro en la tabla de lessons
+            data: {
+              title: string; description: string | undefined; videoKey: string | undefined; thumbnailKey: string | undefined; chapterId: string; position: any; // Si maxPos es undefined -> valor por defecto es 0 y a este se le suma 1 
+            }; // Si maxPos es un número -> se suma 1 al valor de maxPos
+          }) => any;
+        };
+      }) => {      // Iniciamos una transacción para que se ejecuten todas las operaciones en la misma transacción
 
       // tx representa la transacción actual
       // que se compone de dos partes:
@@ -319,7 +340,7 @@ export const deleteChapter = async({
 
     const chapters = courseWithChapters.chapter;                               // Obtenemos los capítulos del curso: "chapters"
 
-    const chapterToDelete = chapters.find((chap) => chap.id === chapterId);    // Desde "chapters" buscamos el capítulo a eliminar "chapterToDelete"
+    const chapterToDelete = chapters.find((chap: { id: string; }) => chap.id === chapterId);    // Desde "chapters" buscamos el capítulo a eliminar "chapterToDelete"
 
     if (!chapterToDelete){                                                     // Validación de la existencia del capítulo a eliminar
       return {
@@ -328,9 +349,9 @@ export const deleteChapter = async({
       }
     }
 
-    const remainingChapters = chapters.filter((chap) => chap.id !== chapterId); // Obtenemos los capítulos restantes del curso: RemainingChapters
+    const remainingChapters = chapters.filter((chap: { id: string; }) => chap.id !== chapterId); // Obtenemos los capítulos restantes del curso: RemainingChapters
 
-    const updates = remainingChapters.map((chap, index) => {                    // Actualizamos los capítulos restantes con la nueva posición
+    const updates = remainingChapters.map((chap: { id: any; }, index: number) => {                    // Actualizamos los capítulos restantes con la nueva posición
       return prisma.chapter.update({                                            // Al hacer map obtenemos un índice para cada chapter que queda y para eliminar el cero sumamos 1
         where: { id: chap.id },
         data: { position: index + 1}
@@ -401,7 +422,7 @@ export const deleteLesson = async({
 
     const lessons = chapterWithLessons.lessons;                              // Obtenemos las lessons del capítulo: "lessons"
 
-    const lessonToDelete = lessons.find((lesson) => lesson.id === lessonId); // Desde lessons buscamos la lesson a eliminar "lessonToDelete"
+    const lessonToDelete = lessons.find((lesson: { id: string; }) => lesson.id === lessonId); // Desde lessons buscamos la lesson a eliminar "lessonToDelete"
 
     if(!lessonToDelete){                                                     // Validación de la existencia de la lesson
       return {
@@ -410,9 +431,9 @@ export const deleteLesson = async({
       }
     }
 
-    const remainingLessons = lessons.filter((lesson) => lesson.id !== lessonId); // Obtenemos las lessons restantes del capítulo: RemainingLessons
+    const remainingLessons = lessons.filter((lesson: { id: string; }) => lesson.id !== lessonId); // Obtenemos las lessons restantes del capítulo: RemainingLessons
 
-    const updates = remainingLessons.map((lesson, index) => {                    // Actualizamos las lessons restantes con la nueva posición
+    const updates = remainingLessons.map((lesson: { id: any; }, index: number) => {                    // Actualizamos las lessons restantes con la nueva posición
       return prisma.lesson.update({                                              // Al hacer map obtenemos un índice para cada lesson que queda y para eliminar el cero sumamos 1
         where: { id: lesson.id },
         data: { position: index + 1}
