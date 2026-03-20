@@ -52,11 +52,12 @@ export const auth = betterAuth({
 
   // ✅ 🔥 ONLY THIS ADD
   baseURL: env.BETTER_AUTH_URL,
-  secret: env.BETTER_AUTH_SECRET,
-  trustedOrigins: [
-    env.BETTER_AUTH_URL,
-    "http://localhost:3000",
-  ],
+secret: env.BETTER_AUTH_SECRET,
+
+trustedOrigins: [
+  "https://next-learn-five-xi.vercel.app",
+  "http://localhost:3000",
+],
 
   socialProviders: {
     github: {
