@@ -4,6 +4,9 @@ import { env } from "./lib/env"
 import { NextRequest, NextResponse } from "next/server";
 import { getSessionCookie } from "better-auth/cookies";
 
+// ✅ Add this - forces Node.js runtime instead of Edge
+export const runtime = "nodejs";
+
 // Middleware de autenticación específico para rutas protegidas.
 export async function authMiddleware(request: NextRequest) {
   const sessionCookie = getSessionCookie(request);                 // El código busca una cookie de sesión. Esta cookie es la prueba de que el usuario ha iniciado sesión previamente.
