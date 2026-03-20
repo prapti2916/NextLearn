@@ -36,9 +36,27 @@ const aj = arcjet({
 })
 
 export default createMiddleware(aj, async (request: NextRequest) => {                        // Después de la protección de Arcjet, se aplica la lógica de autenticación condicional.
-  if (request.nextUrl.pathname.startsWith("/admin")) {                                       // Si la ruta es de administrador, se invoca el middleware de autenticación.
-    return authMiddleware(request)
+  // if (request.nextUrl.pathname.startsWith("/admin")) {                                       // Si la ruta es de administrador, se invoca el middleware de autenticación.
+  //   return authMiddleware(request)
+  // }
+
+  if (request.nextUrl.pathname.startsWith("/admin")) {
+  try {
+    const session = getSessionCookie(request);
+
+    if (!session) {
+      const url = request.nextUrl.clone();
+      url.pathname = "/login";
+      return NextResponse.redirect(url);
+    }
+
+    return NextResponse.next();
+  } catch {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    return NextResponse.redirect(url);
   }
+}
 
   return NextResponse.next()                                                                 // Para cualquier otra ruta, se permite el paso (ya ha sido procesada por Arcjet).
 
@@ -47,32 +65,3 @@ export default createMiddleware(aj, async (request: NextRequest) => {           
 
 
 
-
-// app/_middleware.ts
-// import { NextRequest, NextResponse } from "next/server";
-
-// // 🔐 Admin protection middleware (Edge-friendly, <1MB)
-// export async function middleware(request: NextRequest) {
-//   const { pathname } = request.nextUrl;
-
-//   // Only protect /admin routes
-//   if (pathname.startsWith("/admin")) {
-//     // Simple session check using cookie named 'session'
-//     const sessionCookie = request.cookies.get("session")?.value;
-
-//     // If no session → redirect to home page
-//     if (!sessionCookie) {
-//       return NextResponse.redirect(new URL("/", request.url));
-//     }
-//   }
-
-//   // Allow all other requests
-//   return NextResponse.next();
-// }
-
-// // 🚫 Ignore static files & auth API
-// export const config = {
-//   matcher: [
-//     "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
-//   ],
-// };
