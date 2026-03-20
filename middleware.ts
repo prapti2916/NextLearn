@@ -1,85 +1,105 @@
 
-// import arcjet, { createMiddleware, detectBot } from "@arcjet/next";
-// import { env } from "./lib/env"
+// // import arcjet, { createMiddleware, detectBot } from "@arcjet/next";
+// // import { env } from "./lib/env"
+// // import { NextRequest, NextResponse } from "next/server";
+// // import { getSessionCookie } from "better-auth/cookies";
+
+// // // Middleware de autenticación específico para rutas protegidas.
+// // export async function authMiddleware(request: NextRequest) {
+// //   const sessionCookie = getSessionCookie(request);                 // El código busca una cookie de sesión. Esta cookie es la prueba de que el usuario ha iniciado sesión previamente.
+
+// //    if (!sessionCookie) {
+// //      return NextResponse.redirect(new URL("/", request.url));       // Si no se encuentra una cookie de sesión, redirige al usuario a la página de inicio.
+// //    }
+
+// //   return NextResponse.next();                                      // Si SÍ hay cookie: El middleware considera que el usuario probablemente está autenticado y le permite continuar
+// // }
+
+
+// // export const config = {
+// //   matcher: ["/((?!_next/static|_next/image/favicon.ico|api/auth).*)"]
+// // };
+
+// // const aj = arcjet({
+// //   key: env.ARCJET_KEY!,
+// //   rules: [
+// //     detectBot({
+// //       mode: "LIVE",                      
+// //       allow: [                           // Permite el paso a bots conocidos y beneficiosos (buscadores, monitores, etc.).
+// //         "CATEGORY:SEARCH_ENGINE",
+// //         "CATEGORY:MONITOR",
+// //         "CATEGORY:PREVIEW",
+// //         "STRIPE_WEBHOOK"
+// //       ]
+// //     })
+// //   ]
+// // })
+
+// // export default createMiddleware(aj, async (request: NextRequest) => {                        // Después de la protección de Arcjet, se aplica la lógica de autenticación condicional.
+// //   if (request.nextUrl.pathname.startsWith("/admin")) {                                       // Si la ruta es de administrador, se invoca el middleware de autenticación.
+// //     return authMiddleware(request)
+// //   }
+
+// //   return NextResponse.next()                                                                 // Para cualquier otra ruta, se permite el paso (ya ha sido procesada por Arcjet).
+
+// // });
+
+
+
+
+
+// // app/_middleware.ts
 // import { NextRequest, NextResponse } from "next/server";
-// import { getSessionCookie } from "better-auth/cookies";
 
-// // Middleware de autenticación específico para rutas protegidas.
-// export async function authMiddleware(request: NextRequest) {
-//   const sessionCookie = getSessionCookie(request);                 // El código busca una cookie de sesión. Esta cookie es la prueba de que el usuario ha iniciado sesión previamente.
+// // 🔐 Admin protection middleware (Edge-friendly, <1MB)
+// export async function middleware(request: NextRequest) {
+//   const { pathname } = request.nextUrl;
 
-//    if (!sessionCookie) {
-//      return NextResponse.redirect(new URL("/", request.url));       // Si no se encuentra una cookie de sesión, redirige al usuario a la página de inicio.
-//    }
+//   // Only protect /admin routes
+//   if (pathname.startsWith("/admin")) {
+//     // Simple session check using cookie named 'session'
+//     const sessionCookie = request.cookies.get("session")?.value;
 
-//   return NextResponse.next();                                      // Si SÍ hay cookie: El middleware considera que el usuario probablemente está autenticado y le permite continuar
-// }
-
-
-// export const config = {
-//   matcher: ["/((?!_next/static|_next/image/favicon.ico|api/auth).*)"]
-// };
-
-// const aj = arcjet({
-//   key: env.ARCJET_KEY!,
-//   rules: [
-//     detectBot({
-//       mode: "LIVE",                      
-//       allow: [                           // Permite el paso a bots conocidos y beneficiosos (buscadores, monitores, etc.).
-//         "CATEGORY:SEARCH_ENGINE",
-//         "CATEGORY:MONITOR",
-//         "CATEGORY:PREVIEW",
-//         "STRIPE_WEBHOOK"
-//       ]
-//     })
-//   ]
-// })
-
-// export default createMiddleware(aj, async (request: NextRequest) => {                        // Después de la protección de Arcjet, se aplica la lógica de autenticación condicional.
-//   if (request.nextUrl.pathname.startsWith("/admin")) {                                       // Si la ruta es de administrador, se invoca el middleware de autenticación.
-//     return authMiddleware(request)
+//     // If no session → redirect to home page
+//     if (!sessionCookie) {
+//       return NextResponse.redirect(new URL("/", request.url));
+//     }
 //   }
 
-//   return NextResponse.next()                                                                 // Para cualquier otra ruta, se permite el paso (ya ha sido procesada por Arcjet).
+//   // Allow all other requests
+//   return NextResponse.next();
+// }
 
-// });
+// // 🚫 Ignore static files & auth API
+// export const config = {
+//   matcher: [
+//     "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
+//   ],
+// };
 
+import { NextRequest, NextResponse } from "next/server";
 
+// 🔐 Admin protection middleware (Edge-friendly, <1MB)
+export async function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
+  // Only protect /admin routes
+  if (pathname.startsWith("/admin")) {
+    // Replace 'sessionToken' with the exact cookie name your auth library uses
+    const sessionCookie = request.cookies.get("sessionToken")?.value;
 
-import arcjet, { createMiddleware, detectBot } from "@arcjet/next";
-import { env } from "./lib/env";
-import { NextResponse } from "next/server";
-
-// Arcjet bot detection (lightweight)
-const aj = arcjet({
-  key: env.ARCJET_KEY!,
-  rules: [
-    detectBot({
-      mode: "LIVE",
-      allow: [
-        "CATEGORY:SEARCH_ENGINE",
-        "CATEGORY:MONITOR",
-        "CATEGORY:PREVIEW",
-        "STRIPE_WEBHOOK",
-      ],
-    }),
-  ],
-});
-
-export default createMiddleware(aj, async (request) => {
-  const url = request.nextUrl.clone();
-
-  // Lightweight /admin redirect
-  if (url.pathname.startsWith("/admin")) {
-    // ✅ No heavy imports here → Edge function <1 MB
-    url.pathname = "/login"; // redirect to login if middleware detects /admin
-    return NextResponse.redirect(url);
+    // If no session → redirect to login page instead of home
+    if (!sessionCookie) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
   }
 
   return NextResponse.next();
-});
+}
 
+// 🚫 Ignore static files & auth API
 export const config = {
-  matcher: ["/((?!_next/static|_next/image/favicon.ico|api/auth).*)"],
+  matcher: [
+    "/((?!_next/static|_next/image|favicon.ico|api/auth).*)",
+  ],
 };
