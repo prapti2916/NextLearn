@@ -4,9 +4,6 @@
 // import { NextRequest, NextResponse } from "next/server";
 // import { getSessionCookie } from "better-auth/cookies";
 
-// // ✅ Add this - forces Node.js runtime instead of Edge
-// export const runtime = "nodejs";
-
 // // Middleware de autenticación específico para rutas protegidas.
 // export async function authMiddleware(request: NextRequest) {
 //   const sessionCookie = getSessionCookie(request);                 // El código busca una cookie de sesión. Esta cookie es la prueba de que el usuario ha iniciado sesión previamente.
@@ -51,6 +48,7 @@
 
 
 
+
 // app/_middleware.ts
 // import { NextRequest, NextResponse } from "next/server";
 
@@ -81,13 +79,13 @@
 // };
 
 
-
 import { NextRequest, NextResponse } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
 
 export async function middleware(request: NextRequest) {
   if (request.nextUrl.pathname.startsWith("/admin")) {
-    const sessionCookie = getSessionCookie(request);
+    const sessionCookie = request.cookies.get("better-auth.session_token") || 
+                          request.cookies.get("__Secure-better-auth.session_token");
+    
     if (!sessionCookie) {
       return NextResponse.redirect(new URL("/", request.url));
     }
