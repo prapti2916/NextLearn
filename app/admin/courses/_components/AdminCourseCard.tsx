@@ -1,3 +1,4 @@
+"use client"
 import { AdminCourseType } from "@/app/data/admin/admin-get-courses"
 import { Button, buttonVariants } from "@/components/ui/button"
 import { Card, CardContent } from "@/components/ui/card"
@@ -109,7 +110,7 @@ export const AdminCourseCardSkeleton = () => {
       </div>
 
       <div className="w-full relative h-fit">
-        <Skeleton className="w-full h-[250px] rounded-t-lg aspect-video object-cover" />
+        <Skeleton className="w-full h-62.5 rounded-t-lg aspect-video object-cover" />
       </div>
 
       <CardContent className="p-4">
