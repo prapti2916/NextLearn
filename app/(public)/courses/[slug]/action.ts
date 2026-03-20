@@ -207,6 +207,7 @@ import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
 import Stripe from "stripe";
 
+// Rate limit rule
 const aj = arcjet.withRule(
   fixedWindow({
     mode: "LIVE",
@@ -221,7 +222,6 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
   let checkoutUrl: string;
 
   try {
-    // Arcjet request
     const req = await request();
 
     const decision = await aj.protect(req, {
@@ -229,40 +229,38 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
     });
 
     if (!decision.isDenied) {
-      return {
-        status: "error",
-        message: "You have been blocked"
-      };
+      return { status: "error", message: "You have been blocked" };
     }
 
-    // ✅ Dynamic origin detection (TS-safe)
-    let origin = "http://localhost:3000"; // fallback
-    if (req?.headers) {
-      let protocol: string | undefined;
-      let host: string | undefined;
+    // ✅ Dynamic base URL
+    let baseUrl = "http://localhost:3000"; // fallback
+    if (process.env.NODE_ENV === "production") {
+      baseUrl = "https://next-learn-five-xi.vercel.app";
+    } else if (req?.headers) {
+      // TypeScript-safe headers handling
+      let protocol = "http";
+      let host = "localhost:3000";
 
-      if (typeof (req.headers as Headers)?.get === "function") {
-        protocol = (req.headers as Headers).get("x-forwarded-proto") || "http";
-        host = (req.headers as Headers).get("host") || "localhost:3000";
-      } else if (typeof req.headers === "object") {
-        const h = req.headers as Record<string, string | string[] | undefined>;
+      const headers = req.headers as
+        | Headers
+        | Record<string, string | string[] | undefined>;
+
+      if (typeof (headers as Headers)?.get === "function") {
+        protocol = (headers as Headers).get("x-forwarded-proto") || "http";
+        host = (headers as Headers).get("host") || "localhost:3000";
+      } else if (typeof headers === "object") {
+        const h = headers as Record<string, string | string[] | undefined>;
         protocol = (h["x-forwarded-proto"] as string) || "http";
         host = Array.isArray(h["host"]) ? h["host"][0] : (h["host"] as string) || "localhost:3000";
       }
 
-      origin = `${protocol}://${host}`;
+      baseUrl = `${protocol}://${host}`;
     }
 
     // Fetch course
     const course = await prisma.course.findUnique({
       where: { id: courseId },
-      select: {
-        id: true,
-        title: true,
-        price: true,
-        slug: true,
-        stripePriceId: true,
-      },
+      select: { id: true, title: true, price: true, slug: true, stripePriceId: true },
     });
 
     if (!course) {
@@ -297,16 +295,10 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
       });
     }
 
-    // DB Transaction
+    // DB transaction
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-
       const existingEnrollment = await tx.enrollment.findUnique({
-        where: {
-          userId_courseId: {
-            userId: user.id,
-            courseId: courseId,
-          },
-        },
+        where: { userId_courseId: { userId: user.id, courseId: courseId } },
         select: { status: true, id: true }
       });
 
@@ -331,8 +323,8 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
         customer: stripeCustomerId,
         line_items: [{ price: course.stripePriceId as string, quantity: 1 }],
         mode: "payment",
-        success_url: `${origin}/payment/success`,
-        cancel_url: `${origin}/payment/cancel`,
+        success_url: `${baseUrl}/payment/success`, // dynamic URL
+        cancel_url: `${baseUrl}/payment/cancel`,   // dynamic URL
         metadata: {
           userId: user.id,
           courseId: course.id,
@@ -351,5 +343,6 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
     return { status: "error", message: "Failed to enroll in course" };
   }
 
-  redirect(checkoutUrl); // redirect to Stripe checkout
+  // Redirect to Stripe checkout
+  redirect(checkoutUrl);
 };
