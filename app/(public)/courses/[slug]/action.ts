@@ -150,7 +150,8 @@ export const enrollInCourseAction = async (courseId:string):Promise<ApiResponse 
           }
         })
       }
-
+      
+      console.log("BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL)
       const chekoutSession = await stripe.checkout.sessions.create({            // Creamos una session de pagos de stripe
         customer: stripeCustomerId,
         line_items: [
