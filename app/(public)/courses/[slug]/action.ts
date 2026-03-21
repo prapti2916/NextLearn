@@ -9,7 +9,6 @@ import { ApiResponse } from "@/lib/types"
 import { request } from "@arcjet/next";
 import { Prisma } from "@prisma/client";
 import { redirect } from "next/navigation";
-
 import Stripe from "stripe";
 
 const aj = arcjet.withRule(
