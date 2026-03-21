@@ -3,7 +3,7 @@
 import { requireUser } from "@/app/data/user/require-user"
 import arcjet, { fixedWindow } from "@/lib/arcjet";
 import { prisma } from "@/lib/db";
-// import { env } from "@/lib/env";
+import { env } from "@/lib/env";
 import { stripe } from "@/lib/stripe";
 import { ApiResponse } from "@/lib/types"
 import { request } from "@arcjet/next";
@@ -24,8 +24,8 @@ const aj = arcjet.withRule(
 // Esta action  se asegura de que el usuario que intenta inscribirse en un curso tenga una 
 // cuenta de cliente correspondiente en la plataforma de pagos Stripe. Si no la tiene, la crea.
 
-export const enrollInCourseAction = async (courseId: string): Promise<ApiResponse | never> => {
-
+export const enrollInCourseAction = async (courseId:string):Promise<ApiResponse | never> => {
+  
   const user = await requireUser();                                              // 1º asegurarse de que hay un usuario con la sesión iniciada.      
 
   let checkoutUrl: string;
@@ -37,7 +37,7 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
       fingerprint: user.id,
     });
 
-    if (!decision.isDenied) {
+    if(!decision.isDenied){
       return {
         status: "error",
         message: "You have been blocked"
@@ -57,7 +57,7 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
       }
     })
 
-    if (!course) {
+    if(!course){
       return {
         status: "error",
         message: "Course not found"
@@ -71,19 +71,19 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
       };
     }
 
-    let stripeCustomerId: string                                                   // 3º Verificamos que el usuario sea un cliente de stripe
+    let stripeCustomerId:string                                                   // 3º Verificamos que el usuario sea un cliente de stripe
     const userWithStripeCustomerId = await prisma.user.findUnique({               // Para ello buscamos en bd si el usuario tiene ya un id de stripe guardado
       where: {
         id: user.id
       },
-      select: {
+      select:{
         stripeCustomerId: true
       }
     })
 
-    if (userWithStripeCustomerId?.stripeCustomerId) {                               // Si ya existe, lo usamos
+    if(userWithStripeCustomerId?.stripeCustomerId){                               // Si ya existe, lo usamos
       stripeCustomerId = userWithStripeCustomerId.stripeCustomerId
-    } else {                                                                        // Si no existe, lo creamos
+    }else{                                                                        // Si no existe, lo creamos
       const customer = await stripe.customers.create({
         email: user.email,
         name: user.name,
@@ -107,7 +107,7 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
     // const result = await prisma.$transaction(async (tx) => {                     // Garantiza que todas las operaciones sobre la base de datos (verificar si existe una inscripción, crearla o actualizarla) se completen con éxito como un solo bloque
 
     const result = await prisma.$transaction(async (tx: Prisma.TransactionClient) => {
-
+      
       const existingEnrollment = await tx.enrollment.findUnique({                // Comprobamos si el usuario ya tiene una inscripción para ese curso. 
         where: {
           userId_courseId: {
@@ -121,7 +121,7 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
         }
       })
 
-      if (existingEnrollment?.status === "Active") {                               // Si ya existe una inscripción activa, se devuelve un mensaje
+      if(existingEnrollment?.status === "Active"){                               // Si ya existe una inscripción activa, se devuelve un mensaje
         return {
           status: "success",
           message: "You are already enrolled in this course"
@@ -129,7 +129,7 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
       }
 
       let enrollment;
-      if (existingEnrollment) {                                                    // Si existe simplemente una subscripción actualizamos el status a Pending
+      if(existingEnrollment){                                                    // Si existe simplemente una subscripción actualizamos el status a Pending
         enrollment = await tx.enrollment.update({
           where: {
             id: existingEnrollment.id
@@ -155,16 +155,14 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
         customer: stripeCustomerId,
         line_items: [
           {
-            price: course.stripePriceId as string,
+           price: course.stripePriceId as string,
             quantity: 1,
           },
         ],
 
         mode: "payment",
-        // success_url: `${env.BETTER_AUTH_URL}/payment/success`,
-        // cancel_url: `${env.BETTER_AUTH_URL}/payment/cancel`,
-        success_url: `https://next-learn-five-xi.vercel.app/payment/success`,
-        cancel_url: `https://next-learn-five-xi.vercel.app/payment/cancel`,
+        success_url: `${env.BETTER_AUTH_URL}/payment/success`,
+        cancel_url: `${env.BETTER_AUTH_URL}/payment/cancel`,
         metadata: {
           userId: user.id,                                                      // En esta session de pagos agregamos el userId del usuario
           courseId: course.id,                                                  // y el id del curso
@@ -179,9 +177,9 @@ export const enrollInCourseAction = async (courseId: string): Promise<ApiRespons
     })
 
     checkoutUrl = result.checkoutUrl as string;                    // Creamos la url de compra desde el resultado de la transacción
-
+  
   } catch (error) {
-    if (error instanceof Stripe.errors.StripeError) {
+    if(error instanceof Stripe.errors.StripeError){
       return {
         status: "error",
         message: "Payment system error. Please try again later"
