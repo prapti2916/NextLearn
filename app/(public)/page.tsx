@@ -135,7 +135,7 @@ export default function Home() {
             Elevate your Learning Experience
           </h1>
 
-          <p className="max-w-[700px] text-muted-foreground md:text-xl">
+          <p className="max-w-175 text-muted-foreground md:text-xl">
             Discover a new way to learn with our modern, interactive learning
             management system. Access high-quality courses anytime, anywhere.
           </p>
@@ -177,7 +177,7 @@ export default function Home() {
 
         {/* ================= CODE EDITOR CARD ================= */}
         <Link href="/code-editor" className="h-full">
-          <Card className="h-full flex flex-col border-2 border-primary/40 hover:border-primary hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-gradient-to-br from-background to-muted">
+          <Card className="h-full flex flex-col border-2 border-primary/40 hover:border-primary hover:shadow-2xl hover:-translate-y-2 transition-all duration-300 cursor-pointer bg-linear-to-br from-background to-muted">
             
             <CardHeader className="flex flex-col gap-3">
               <div className="text-4xl">💻</div>

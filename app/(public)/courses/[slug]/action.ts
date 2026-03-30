@@ -25,6 +25,8 @@ const aj = arcjet.withRule(
 // cuenta de cliente correspondiente en la plataforma de pagos Stripe. Si no la tiene, la crea.
 
 export const enrollInCourseAction = async (courseId:string):Promise<ApiResponse | never> => {
+
+  console.log("🔍 BETTER_AUTH_URL:", process.env.BETTER_AUTH_URL) // ← ADD KARO
   
   const user = await requireUser();                                              // 1º asegurarse de que hay un usuario con la sesión iniciada.      
 
