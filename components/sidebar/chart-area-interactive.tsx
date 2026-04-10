@@ -6,7 +6,7 @@ import { Bar, BarChart, CartesianGrid, XAxis } from "recharts"
 
 import {
   Card,
-  
+
   CardContent,
   CardDescription,
   CardHeader,
@@ -41,7 +41,7 @@ export const description = "An interactive area chart"
 // const dummyEnrollments = generateDummyEnrollments(30);
 
 const chartConfig = {
-  enrollments:{
+  enrollments: {
     label: "Enrollments",
     color: "var(--chart-1)",
   }
@@ -101,19 +101,19 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
             /> */}
 
             <XAxis
-  dataKey="date"
-  axisLine={false}
-  tickLine={false}
-  tickMargin={8}
-  interval={1}  // show every 4th date
-  tickFormatter={(value) => {
-    const date = new Date(value)
-    return date.toLocaleDateString("en-US", {
-      month: "short",
-      day: "numeric",
-    })
-  }}
-/>
+              dataKey="date"
+              axisLine={false}
+              tickLine={false}
+              tickMargin={8}
+              interval={1}  // show every 4th date
+              tickFormatter={(value) => {
+                const date = new Date(value)
+                return date.toLocaleDateString("en-US", {
+                  month: "short",
+                  day: "numeric",
+                })
+              }}
+            />
 
             <ChartTooltip
               content={
