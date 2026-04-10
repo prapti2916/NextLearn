@@ -85,7 +85,7 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
             margin={{ left: 12, right: 12 }}
           >
             <CartesianGrid vertical={false} />
-            <XAxis
+            {/* <XAxis
               dataKey="date"
               axisLine={false}
               tickLine={false}
@@ -98,7 +98,22 @@ export function ChartAreaInteractive({ data }: ChartAreaInteractiveProps) {
                   day: "numeric",
                 })
               }}
-            />
+            /> */}
+
+            <XAxis
+  dataKey="date"
+  axisLine={false}
+  tickLine={false}
+  tickMargin={8}
+  interval={1}  // show every 4th date
+  tickFormatter={(value) => {
+    const date = new Date(value)
+    return date.toLocaleDateString("en-US", {
+      month: "short",
+      day: "numeric",
+    })
+  }}
+/>
 
             <ChartTooltip
               content={

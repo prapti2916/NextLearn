@@ -172,7 +172,7 @@ const CourseCreationPage = () => {
                     <FormControl>
                       <Textarea
                         placeholder="Small Description"
-                        className="min-h-[120px]"
+                        className="min-h-30"
                         {...field}
                       />
                     </FormControl>
