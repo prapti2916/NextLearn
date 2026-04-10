@@ -13,30 +13,8 @@
 //   }
 // }
 // export default nextConfig;
-//  /** @type {import('next').NextConfig} */
-// const nextConfig = {
-//   images: {
-//     remotePatterns: [
-//       {
-//         protocol: 'https',
-//         hostname: 'nextlms1.fly.storage.tigris.dev',
-//       },
-//     ],
-//   },
-// };
-
-// export default nextConfig;
-
-
-
-
-/** @type {import('next').NextConfig} */
+ /** @type {import('next').NextConfig} */
 const nextConfig = {
-  experimental: {
-    staleTimes: {
-      dynamic: 0,
-    }
-  },
   images: {
     remotePatterns: [
       {
